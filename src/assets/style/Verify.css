@@ -97,22 +97,23 @@
 .btn-verify {
     width: 100%;
     height: 35px;
-    margin-top: 290px;
+    margin-bottom: 20px;
 }
 
-.btn-back {
+.btn-login {
     width: 100%;
     height: 35px;
-    margin-top: 290px;
-    background-color: #fff;
-    border: 1px solid #ABABAB;
+    margin-top: 20px;
+    background-color: #F87555;
+    border: none;
     border-radius: 5px;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #4D4D4D;
+    color: #fff;
     font-size: small;
     text-decoration: none;
+    margin-top: 40px;
 }
 
 .verify-success {

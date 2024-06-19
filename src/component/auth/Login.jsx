@@ -1,46 +1,24 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import "../../assets/style/Login.css";
 import Logo from "../../assets/image/logo.png";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useNotification from "../../hooks/useNotification.js";
 import Notification from "../../component/common/Notification";
-import { useAuth } from "../context/AuthContext.js";
+import {useAuth} from "../context/AuthContext.js";
 
 
 const Login = () => {
-  const { login, isMember, sendOtp } = useAuth();
+  const { login, isMember } = useAuth();
   const { showSuccess, showError } = useNotification();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    if (location.state?.message) {
-      showSuccess(location.state.message);
-      navigate(location.pathname, { replace: true, state: {} });
-    }
-  }, [location, showSuccess, navigate]);
 
   const [formData, setFormData] = useState({
     email: "",
     password: ""
   });
 
-  // xử lý send otp
-  const send = async () => {
-    try {
-      const response = await sendOtp(formData.email);
-      if (response.status === 200) {
-        showSuccess(response.message);
-      }
-    } catch (error) {
-      showError(error.message);
-    }
-  };
-
-
-  
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,7 +36,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
-      showError('Vui lòng điền đầy đủ thông tin');
+      showError('Error', 'Please fill in all fields');
       return;
     }
 
@@ -71,14 +49,11 @@ const Login = () => {
         } else {
           navigate("/admin");
         }
-      } else if (response.status === 302) {
-        send();
-        navigate("/verify");
-      } else {
-        showError(response.message);
       }
     } catch (error) {
-      showError(error.message);
+      console.log("Error logging in:", error);
+      
+      showError('Error', error);
     }
 
   };
@@ -96,18 +71,18 @@ const Login = () => {
   //     }
   //   } catch (error) {
   //     console.error("Error logging in with Google:", error);
-  //     showError(error.message);
+  //     showError('Error', error.message);
   //   }
   // };
 
   // const handleGoogleLoginFailure = (error) => {
   //   console.error("Google login failed:", error);
-  //   showError('Google login failed');
+  //   showError('Error', 'Google login failed');
   // };
 
   const handleLogin = () => {
     window.location.href = 'http://localhost:8080/login/oauth2/code/google';
-  };
+};
 
 
 
@@ -119,30 +94,30 @@ const Login = () => {
           <img src={Logo} alt="logo" />
         </div>
         <div className="login-title">
-          <h6>Đăng nhập</h6>
+          <h6>Welcome back !</h6>
           <div className="sub-title">
-            Bạn chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
+            Don't have an account ? <Link to="/register">Register here</Link>
           </div>
         </div>
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-1">
+          <Form.Group className="mb-3">
             <Form.Label className="label">Email</Form.Label>
             <Form.Control
               className="field-input"
               type="email"
-              placeholder="Nhập email"
+              placeholder="Email"
               style={{ fontSize: "small" }}
               name="email"
               value={formData.email}
               onChange={handleChange}
             />
           </Form.Group>
-          <Form.Group className="mb-1">
-            <Form.Label className="label">Mật khẩu</Form.Label>
+          <Form.Group className="mb-3">
+            <Form.Label className="label">Password</Form.Label>
             <Form.Control
               className="field-input"
               type="password"
-              placeholder="Nhập mật khẩu"
+              placeholder="Password"
               style={{ fontSize: "small" }}
               name="password"
               value={formData.password}
@@ -150,9 +125,9 @@ const Login = () => {
             />
           </Form.Group>
           <div className="forgot-password">
-            <Link to="/forgotpassword">Quên mật khẩu?</Link>
+            <a href="/">Forgot password?</a>
           </div>
-          <Form.Group className="mb-1">
+          <Form.Group className="mb-3">
             <Button
               className="btn-login"
               type="submit"
@@ -162,17 +137,15 @@ const Login = () => {
                 fontSize: "small",
               }}
             >
-              Đăng nhập
+              Login
             </Button>
           </Form.Group>
         </Form>
-        <div className="or">Hoặc đăng nhập bằng</div>
-        <div className="d-flex justify-content-center align-items-center">
-          <Link onClick={handleLogin} className="btn-login-google">
-            <i className="bi bi-google"></i>
-          </Link>
-        </div>
-
+        <div className="or">Or</div>
+        <a onClick={handleLogin} className="btn-login-google">
+          <i className="bi bi-google"></i>
+          <span className="mx-2">Login with Google</span>
+        </a>
 
       </div>
     </div>

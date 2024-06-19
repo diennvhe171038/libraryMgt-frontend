@@ -12,7 +12,8 @@
     padding: 40px;
     background-color: #fff;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    
 }
 
 .login-logo {
@@ -66,6 +67,7 @@
 .field-input {
     width: 100%;
     height: 35px;
+    margin-bottom: 20px;
     padding: 0 10px;
     border: 1px solid #ABABAB;
     border-radius: 5px;
@@ -74,6 +76,7 @@
 .forgot-password {
     display: flex;
     justify-content: flex-end;
+    margin-bottom: 20px;
     color: #4D4D4D;
 }
 
@@ -90,7 +93,6 @@
 .btn-login {
     width: 100%;
     height: 35px;
-    margin-top: 60px;
 }
 
 .or {
@@ -103,16 +105,16 @@
 }
 
 .btn-login-google {
-    width: 40px;
-    height: 40px;
+    width: 100%;
+    height: 35px;
+    margin-top: 20px;
     background-color: #fff;
     border: 1px solid #ABABAB;
-    border-radius: 50%;
+    border-radius: 5px;
     display: flex;
     justify-content: center;
     align-items: center;
     color: #4D4D4D;
     font-size: small;
     text-decoration: none;
-    padding: 10px;
 }

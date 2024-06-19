@@ -1,12 +1,12 @@
 import { successNotification, errorNotification } from '../component/common/Notification';
 
 const useNotification = () => {
-  const showSuccess = (description) => {
-    successNotification(description);
+  const showSuccess = (title, description) => {
+    successNotification(title, description);
   };
 
-  const showError = (description) => {
-    errorNotification(description);
+  const showError = (title, description) => {
+    errorNotification(title, description);
   };
 
   return {
