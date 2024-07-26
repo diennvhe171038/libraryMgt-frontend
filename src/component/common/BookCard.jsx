@@ -19,7 +19,7 @@ const BookCard = ({ bookId, imageUrl, mode, title, authors, publicationYear, rat
         return `${authorString}, ${publicationYear}`;
     };
 
-    
+
 
     const cardContent = (
         <div
@@ -51,7 +51,7 @@ const BookCard = ({ bookId, imageUrl, mode, title, authors, publicationYear, rat
                 {mode === 'info' && (
                     <>
                         <Card.Img
-                            src={imageUrl}
+                            src={imageUrl ? imageUrl : 'https://via.placeholder.com/150'}
                             style={{
                                 borderRadius: '5px',
                                 height: '8rem',
