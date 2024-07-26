@@ -142,7 +142,7 @@ const BookDetail = () => {
                 <Row style={{ backgroundColor: '#fff', marginBottom: '20px' }}>
                     <Col md={4} style={{ display: 'flex', padding: '0' }}>
                         <BookCard
-                            imageUrl={bookDetail.imageUrl}
+                            imageUrl={bookDetail.imageUrl ? bookDetail.imageUrl : 'https://via.placeholder.com/300x400'}
                             mode="imageShow"
                             cardWidth="18rem"
                             cardPadding="16px"

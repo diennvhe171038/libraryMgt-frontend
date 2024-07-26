@@ -155,15 +155,11 @@ const Search = () => {
                     <tr key={book.id}>
                       <td className="align-middle">
                         <div className="d-flex align-items-center">
-                          {book.imageUrl ? (
-                            <Image
-                              src={book.imageUrl}
-                              alt={book.title}
-                              style={{ width: '70px', height: 'auto', marginRight: '20px' }}
-                            />
-                          ) : (
-                            <div style={{ width: '70px', height: 'auto', marginRight: '20px' }}>No Image</div>
-                          )}
+                          <Image
+                            src={book.imageUrl ? book.imageUrl : 'https://via.placeholder.com/150'}
+                            alt={book.title}
+                            style={{ width: '70px', height: 'auto', marginRight: '20px' }}
+                          />
                           <div>
                             {book.title}
                             <div style={{ fontSize: 'x-small' }}>{renderAuthors(book.authors)}, {book.publicationYear}</div>
