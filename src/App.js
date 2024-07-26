@@ -34,6 +34,10 @@ import Layout from "./component/common/Layout";
 import { AdminRoute, LibrarianRoute, ProtectedRoute } from "./routes/Guard";
 import PaymentConfirm from "./component/payment/PaymenConfirm";
 import Profile from "./component/client/profile/Profile";
+import AboutUs from "./component/common/AboutUs";
+import Support from "./component/common/Support";
+import TermOfService from "./component/common/TermOfService";
+import PrivacyPolicy from "./component/common/PrivacyPolicy";
 
 const App = () => {
   return (
@@ -47,6 +51,10 @@ const App = () => {
             <Route path="book/detail/:id" element={<BookDetail />} />
             <Route path="book/category/:parentCategoryId" element={<BookCategory />} />
             <Route path="book/category/:parentCategoryId/:subCategoryId" element={<BookCategory />} />
+            <Route path="about-us" element={<AboutUs />} />
+            <Route path="support" element={<Support />} />
+            <Route path="terms-of-service" element={<TermOfService />} />
+            <Route path="privacy-policy" element={<PrivacyPolicy />} />
           </Route>
 
           <Route path="/login" element={<Login />} />
