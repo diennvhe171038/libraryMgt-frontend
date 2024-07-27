@@ -89,7 +89,7 @@ const Membership = () => {
                         <tr>
                             <th>Tên gói</th>
                             <th>Tạo ngày</th>
-                            <th>Người tạo</th>
+                            {/* <th>Người tạo</th> */}
                             <th>Thời hạn hết hạn gói</th>
                             <th>Giá</th>
                             <th></th>
@@ -100,7 +100,7 @@ const Membership = () => {
                             <tr key={m.id}>
                                 <td className="align-middle">{m.nameSubscription}</td>
                                 <td className="align-middle">{m.createdAt}</td>
-                                <td className="align-middle">{m?.userCreated?.email}</td>
+                                {/* <td className="align-middle">{m?.userCreated?.email}</td> */}
                                 <td className="align-middle">{m?.expireDate} tháng</td>
                                 <td className="align-middle">{m?.feeMember}</td>
                                 <td className="align-middle">
