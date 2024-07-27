@@ -166,31 +166,33 @@ const NavBar = () => {
 
         </div>
 
-        <div style={{ marginBottom: '20px'}}>
-          <Nav.Item>
-            <Nav.Link as={Link} to="/about-us" style={{ color: '#8A8A8A', fontSize: 'small' }}>
-              <span className='mx-2'>Về chúng tôi</span>
-            </Nav.Link>
-          </Nav.Item>
+        {(!authenticated || member) && (
+          <div style={{ marginBottom: '20px' }}>
+            <Nav.Item>
+              <Nav.Link as={Link} to="/about-us" style={{ color: '#8A8A8A', fontSize: 'small' }}>
+                <span className='mx-2'>Về chúng tôi</span>
+              </Nav.Link>
+            </Nav.Item>
 
-          <Nav.Item>
-            <Nav.Link as={Link} to="/support" style={{ color: '#8A8A8A', fontSize: 'small' }}>
-              <span className='mx-2'>Hỗ trợ</span>
-            </Nav.Link>
-          </Nav.Item>
+            <Nav.Item>
+              <Nav.Link as={Link} to="/support" style={{ color: '#8A8A8A', fontSize: 'small' }}>
+                <span className='mx-2'>Hỗ trợ</span>
+              </Nav.Link>
+            </Nav.Item>
 
-          <Nav.Item>
-            <Nav.Link as={Link} to="/terms-of-service" style={{ color: '#8A8A8A', fontSize: 'small' }}>
-              <span className='mx-2'>Điều khoản dịch vụ</span>
-            </Nav.Link>
-          </Nav.Item>
+            <Nav.Item>
+              <Nav.Link as={Link} to="/terms-of-service" style={{ color: '#8A8A8A', fontSize: 'small' }}>
+                <span className='mx-2'>Điều khoản dịch vụ</span>
+              </Nav.Link>
+            </Nav.Item>
 
-          <Nav.Item>
-            <Nav.Link as={Link} to="/privacy-policy" style={{ color: '#8A8A8A', fontSize: 'small' }}>
-              <span className='mx-2'>Chính sách bảo mật</span>
-            </Nav.Link>
-          </Nav.Item>
-        </div>
+            <Nav.Item>
+              <Nav.Link as={Link} to="/privacy-policy" style={{ color: '#8A8A8A', fontSize: 'small' }}>
+                <span className='mx-2'>Chính sách bảo mật</span>
+              </Nav.Link>
+            </Nav.Item>
+          </div>
+        )}
       </div>
     </Nav>
 

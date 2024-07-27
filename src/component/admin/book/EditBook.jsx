@@ -177,31 +177,18 @@ const EditBook = () => {
       try {
         const sampleImagesResponse = await getBookSampleImages(id);
         if (sampleImagesResponse.status === 200) {
-          const contentDisposition = sampleImagesResponse.headers['content-disposition'];
-          let zipFileName = 'unknown';
-          if (contentDisposition) {
-            const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
-            if (fileNameMatch && fileNameMatch.length === 2) {
-              zipFileName = fileNameMatch[1];
-            }
-          }
-
-          const sampleImagesBlob = new File([sampleImagesResponse.data], zipFileName, { type: sampleImagesResponse.data.type });
+          
           const zip = new JSZip();
 
-          zip.loadAsync(sampleImagesBlob).then(async (zip) => {
-            const imageUrls = [];
-            await Promise.all(Object.keys(zip.files).map(async (filename) => {
-              const fileData = await zip.file(filename).async('blob');
-              const imageUrl = URL.createObjectURL(fileData);
-              imageUrls.push({ url: imageUrl, name: filename });
-            }));
+          const content = await zip.loadAsync(sampleImagesResponse.data);
+          const imageUrls = [];
+          for (const filename in content.files) {
+            const fileData = await content.file(filename).async('blob');
+            const file = new File([fileData], filename, { type: 'image/jpeg' });
+            imageUrls.push(file);
+          }
 
-            setBookSampleImages(imageUrls);
-          }).catch((error) => {
-            console.error("Lỗi giải nén file zip:", error);
-            showError("Lỗi giải nén file zip");
-          });
+          setBookSampleImages(imageUrls);
         } else {
           showError(sampleImagesResponse.message);
         }
@@ -448,7 +435,7 @@ const EditBook = () => {
               name="bookSampleImages"
               onChange={handleChange}
               showError={showError}
-              defaultValue={bookSampleImages}
+              bookSampleImages={bookSampleImages}
             />
 
           </Col>

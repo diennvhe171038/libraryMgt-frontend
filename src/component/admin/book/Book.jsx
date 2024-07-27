@@ -16,8 +16,8 @@ const Book = () => {
   const [categories, setCategories] = useState([]);
   const [books, setBooks] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(4);
+  const [pageNo, setPageNo] = useState(1);
+  const [pageSize] = useState(5);
   const [searchText, setSearchText] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -44,7 +44,7 @@ const Book = () => {
   }, []);
 
   const handlePageChange = (page) => {
-    setCurrentPage(page);
+    setPageNo(page);
   };
 
   const handleCategoryChange = (categoryId) => {
@@ -58,11 +58,11 @@ const Book = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await getBooks(currentPage, itemsPerPage, searchText, selectedCategory, null);
+        const response = await getBooks(pageNo, pageSize, searchText, selectedCategory, null);
         if (response.status == 200) {
           const booksWithImages = await Promise.all(response.data.items.map(async (book) => {
             try {
-              const imageResponse = await getBookImage(book.id); // Hàm API lấy ảnh sách
+              const imageResponse = await getBookImage(book.id);
               if (imageResponse.status === 200) {
 
                 const contentDisposition = imageResponse.headers['content-disposition'];
@@ -97,7 +97,7 @@ const Book = () => {
     };
 
     fetchBooks();
-  }, [currentPage, itemsPerPage, searchText, selectedCategory]);
+  }, [pageNo, pageSize, searchText, selectedCategory]);
 
   useEffect(() => {
     if (location.state && location.state.success) {
@@ -194,15 +194,12 @@ const Book = () => {
                 <tr key={book.id}>
                   <td className="align-middle">
                     <div className="d-flex align-items-center">
-                      {book.imageUrl ? (
-                        <Image
-                          src={book.imageUrl}
-                          alt={book.title}
-                          style={{ width: '70px', height: 'auto', marginRight: '20px' }}
-                        />
-                      ) : (
-                        <div style={{ width: '70px', height: 'auto', marginRight: '20px' }}>No Image</div>
-                      )}
+                      <Image
+                        src={book.imageUrl ? book.imageUrl : 'https://via.placeholder.com/70'}
+                        alt={book.title}
+                        style={{ width: '70px', height: 'auto', marginRight: '20px' }}
+                      />
+
                       <div style={{ width: '300px' }}>
                         {book.title}
                         <div style={{ fontSize: 'x-small' }}>{renderAuthors(book.authors)}, {book.publicationYear}</div>
@@ -272,7 +269,7 @@ const Book = () => {
               ))}
             </tbody>
           </Table>
-          <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+          <PaginationComponent pageNo={pageNo} totalPages={totalPages} onPageChange={handlePageChange} />
         </div>
       ) : (
         <p className="mt-4">Không có sách nào được tìm thấy</p>

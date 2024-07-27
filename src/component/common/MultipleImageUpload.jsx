@@ -1,101 +1,99 @@
+import { file } from 'jszip';
 import React, { useState, useRef, useEffect } from 'react';
 import { Form, Button, ListGroup } from 'react-bootstrap';
 
-const MultipleImageUpload = ({ label, name, onChange, showError, defaultValue }) => {
-    const [imageFiles, setImageFiles] = useState([]);
-    const [imagePreviews, setImagePreviews] = useState([]);
+const MultipleImageUpload = ({ label, name, onChange, showError, bookSampleImages }) => {
+    const [sampleImageFiles, setSampleImageFiles] = useState([]);
+    const [sampleImagePreviews, setSampleImagePreviews] = useState([]);
     const imageInputRef = useRef(null);
 
+    // useEffect(() => {
+    //     const loadDefaultValue = async () => {
+    //         if (defaultValue && defaultValue.length > 0) {
+    //             try {
+    //                 const newImagePreviews = [];
+    //                 const newImageFiles = [];
+
+    //                 for (let i = 0; i < defaultValue.length; i++) {
+    //                     const imageUrl = defaultValue[i].url;
+    //                     const response = await fetch(imageUrl);
+    //                     const blob = await response.blob();
+    //                     const file = new File([blob], defaultValue[i].name, { type: "image/jpeg" });
+
+    //                     newImageFiles.push(file);
+
+    //                     const reader = new FileReader();
+    //                     reader.onloadend = () => {
+    //                         newImagePreviews.push({ file, preview: reader.result });
+    //                         if (newImagePreviews.length === defaultValue.length) {
+    //                             setImagePreviews((prevPreviews) => [...prevPreviews, ...newImagePreviews]);
+    //                         }
+    //                     };
+    //                     reader.readAsDataURL(file);
+    //                 }
+
+    //                 setImageFiles(newImageFiles);
+    //             } catch (error) {
+    //                 console.error('Error loading defaultValue:', error);
+    //                 showError('Error loading defaultValue');
+    //             }
+    //         }
+    //     };
+
+    //     loadDefaultValue();
+    // }, [defaultValue, showError]);
+
     useEffect(() => {
-        const loadDefaultValue = async () => {
-            if (defaultValue && defaultValue.length > 0) {
-                try {
-                    const newImagePreviews = [];
-                    const newImageFiles = [];
+        if (bookSampleImages && bookSampleImages.length > 0) {
+            const previews = bookSampleImages.map((file) => ({
+                url: URL.createObjectURL(file),
+                name: file.name
+            }));
+            setSampleImageFiles(bookSampleImages);
+            setSampleImagePreviews(previews);
+        }
+    }, [bookSampleImages]);
 
-                    for (let i = 0; i < defaultValue.length; i++) {
-                        const imageUrl = defaultValue[i].url;
-                        const response = await fetch(imageUrl);
-                        const blob = await response.blob();
-                        const file = new File([blob], defaultValue[i].name, { type: "image/jpeg" });
-
-                        newImageFiles.push(file);
-
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                            newImagePreviews.push({ file, preview: reader.result });
-                            if (newImagePreviews.length === defaultValue.length) {
-                                setImagePreviews((prevPreviews) => [...prevPreviews, ...newImagePreviews]);
-                            }
-                        };
-                        reader.readAsDataURL(file);
-                    }
-
-                    setImageFiles(newImageFiles);
-                } catch (error) {
-                    console.error('Error loading defaultValue:', error);
-                    showError('Error loading defaultValue');
-                }
-            }
-        };
-
-        loadDefaultValue();
-    }, [defaultValue, showError]);
+    
 
     const handleImageChange = (e) => {
-        const files = e.target.files;
-        const newImageFiles = [];
-        const newImagePreviews = [];
-
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-
-            if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
-                showError('Chỉ chấp nhận các định dạng: jpg, jpeg, png.');
-                return;
+        const files = Array.from(e.target.files);
+        const validFiles = [];
+        const newPreviews = [];
+        
+        files.forEach((file) => {
+            if(!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+                showError('Chỉ chấp nhận file ảnh có định dạng jpeg, jpg, png');
+            } else if (file.size > 2 * 1024 * 1024) {
+                showError('Kích thước ảnh không được lớn hơn 2MB');
+            } else {
+                validFiles.push(file);
+                newPreviews.push({url: URL.createObjectURL(file), name: file.name});
             }
+        });
 
-            if (file.size > 2 * 1024 * 1024) {
-                showError('Kích thước ảnh không được vượt quá 2MB.');
-                return;
-            }
+        setSampleImageFiles([...sampleImageFiles, ...validFiles]);
+        setSampleImagePreviews([...sampleImagePreviews, ...newPreviews]);
 
-            newImageFiles.push(file);
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                newImagePreviews.push({ file, preview: reader.result });
-                setImagePreviews((prevPreviews) => [...prevPreviews, { file, preview: reader.result }]);
-            };
-            reader.readAsDataURL(file);
-        }
-
-        setImageFiles((prevFiles) => [...prevFiles, ...newImageFiles]);
-        console.log('name:', name, 'files:', [...imageFiles, ...newImageFiles]);
-        onChange({ target: { name, files: [...imageFiles, ...newImageFiles] } });
+        onChange({ target: { name, files: [...sampleImageFiles, ...validFiles] } });
     };
     
     
 
     const handleImageRemove = (index) => {
-        const newImageFiles = [...imageFiles];
-        const newImagePreviews = [...imagePreviews];
+        const newImageFiles = sampleImageFiles.filter((_, fileIndex) => index !== fileIndex);
+        const newImagePreviews = sampleImagePreviews.filter((_, previewIndex) => index !== previewIndex);
 
-        newImageFiles.splice(index, 1);
-        newImagePreviews.splice(index, 1);
-
-        setImageFiles(newImageFiles);
-        setImagePreviews(newImagePreviews);
+        setSampleImageFiles(newImageFiles);
+        setSampleImagePreviews(newImagePreviews);
 
         onChange({ target: { name, files: newImageFiles } });
 
-        // Update the input files
-        const dataTransfer = new DataTransfer();
-        newImageFiles.forEach(file => dataTransfer.items.add(file));
-        imageInputRef.current.files = dataTransfer.files;
+        
     };
 
-    console.log('imageFiles:', imageFiles);
-    console.log('imagePreviews:', imagePreviews);
+    console.log('sampleImageFiles:', sampleImageFiles);
+    console.log('sampleImagePreviews:', sampleImagePreviews);
 
     return (
         <Form.Group className="mb-3">
@@ -109,13 +107,13 @@ const MultipleImageUpload = ({ label, name, onChange, showError, defaultValue })
                 ref={imageInputRef}
                 onChange={handleImageChange}
             />
-            {imagePreviews.length > 0 && (
+            {sampleImagePreviews.length > 0 && (
                 <div style={{ marginTop: '10px' }}>
                     <ListGroup>
-                        {imagePreviews.map((item, index) => (
+                        {sampleImagePreviews.map((item, index) => (
                             <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center" style={{ fontSize: 'small' }}>
-                                <img src={item.preview} alt={item.file.name} style={{ maxWidth: '50px', maxHeight: '50px', marginRight: '10px' }} />
-                                <span>{item.file.name}</span>
+                                <img src={item.url} alt={item.name} style={{ maxWidth: '50px', maxHeight: '50px', marginRight: '10px' }} />
+                                <span>{item.name}</span>
                                 <Button
                                     variant="danger"
                                     onClick={() => handleImageRemove(index)}

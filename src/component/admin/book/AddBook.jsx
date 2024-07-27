@@ -335,13 +335,13 @@ const AddBook = () => {
               onChange={handleChange}
               showError={showError}
             />
-
+            
             <MultipleImageUpload
               label="Tải ảnh đọc thử"
               name="bookSampleImages"
-              value={bookSampleImages}
               onChange={handleChange}
               showError={showError}
+              bookSampleImages={bookSampleImages}
             />
 
           </Col>

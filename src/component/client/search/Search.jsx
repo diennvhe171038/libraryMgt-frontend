@@ -16,8 +16,8 @@ const Search = () => {
   const [categories, setCategories] = useState([]);
   const [books, setBooks] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(4);
+  const [pageNo, setPageNo] = useState(1);
+  const [pageSize] = useState(5);
   const [searchText, setSearchText] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const { isUserAuthenticated, isMember } = useAuth();
@@ -50,7 +50,7 @@ const Search = () => {
   }, []);
 
   const handlePageChange = (page) => {
-    setCurrentPage(page);
+    setPageNo(page);
   };
 
   const handleCategoryChange = (categoryId) => {
@@ -64,7 +64,7 @@ const Search = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await getBooks(currentPage, itemsPerPage, searchText, selectedCategory, 'ACTIVE');
+        const response = await getBooks(pageNo, pageSize, searchText, selectedCategory, 'ACTIVE');
         console.log("Response: ", response);
         if (response.status == 200) {
           const booksWithImages = await Promise.all(response.data.items.map(async (book) => {
@@ -104,7 +104,7 @@ const Search = () => {
     };
 
     fetchBooks();
-  }, [currentPage, itemsPerPage, searchText, selectedCategory]);
+  }, [pageNo, pageSize, searchText, selectedCategory]);
 
   console.log("SelectedCategory: ", selectedCategory);
 
@@ -197,7 +197,7 @@ const Search = () => {
                   ))}
                 </tbody>
               </Table>
-              <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+              <PaginationComponent pageNo={pageNo} totalPages={totalPages} onPageChange={handlePageChange} />
             </React.Fragment>
           ) : (
             <p className="mt-4">Không có sách nào được tìm thấy</p>

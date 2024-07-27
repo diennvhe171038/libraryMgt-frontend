@@ -1,16 +1,24 @@
 .book-card-list {
-    display: flex;
-    overflow-x: auto;
-    padding-bottom: 10px;
-    scrollbar-width: none; /* For Firefox */
-  }
-  
-  .book-card-list::-webkit-scrollbar {
-    display: none; /* For Chrome, Safari, and Opera */
-  }
-  
-  .book-card-wrapper {
-    flex: 0 0 auto;
-    margin-right: 40px;
-  }
-  
+  display: flex;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  scrollbar-width: auto;
+}
+
+.book-card-list::-webkit-scrollbar {
+  height: 10px;
+}
+
+.book-card-list::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+.book-card-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.book-card-wrapper {
+  flex: 0 0 auto;
+  margin-right: 40px;
+}
