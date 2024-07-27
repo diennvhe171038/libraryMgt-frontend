@@ -49,6 +49,11 @@ const Membership = () => {
         const date = new Date(dateString)
         return date.toLocaleString('sv-SE', options).replace(' ', ' ')
     }
+
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount).replace('₫', 'VND');
+    };
+    
     
     const handleShowDeleteModal = (author) => {
         setAuthorToDelete(author);
@@ -116,7 +121,7 @@ const Membership = () => {
                                 <td className="align-middle">{formatDate(m.createdAt)}</td>
                                 {/* <td className="align-middle">{m?.userCreated?.email}</td> */}
                                 <td className="align-middle">{m?.expireDate} tháng</td>
-                                <td className="align-middle">{m?.feeMember}</td>
+                                <td className="align-middle">{formatCurrency(m?.feeMember)}</td>
                                 <td className="align-middle">
                                     <Button
                                         as={Button}
