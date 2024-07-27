@@ -94,10 +94,14 @@ const AddMembership = () => {
         const validateNameSubscription = (nameSubscription) => {
             if (!nameSubscription) {
                 return 'Vui lòng nhập tên gói';
-            } 
+            }
+            const regex = /^[a-zA-Z0-9 ]+$/;
+            if (!regex.test(nameSubscription)) {
+                return 'Tên gói không được chứa ký tự đặc biệt';
+            }
             return '';
         }
-
+        
         const validateFeeMember = (fee_member) => {
             const feePattern = /^[0-9]+$/;
             if(!fee_member) {
@@ -243,7 +247,7 @@ const AddMembership = () => {
                 <TextInput
                     label="Thời hạn của gói ( tháng )"
                     name="expireDate"
-                    type="text"
+                    type="number"
                     placeholder="Nhập thời hạn của gói"
                     value={formData.expireDate}
                     onChange={handleChange}
@@ -254,7 +258,7 @@ const AddMembership = () => {
                 <TextInput
                     label="Giá"
                     name="fee_member"
-                    type="text"
+                    type="number"
                     placeholder="Nhập giá"
                     value={formData.fee_member}
                     onChange={handleChange}
@@ -265,7 +269,7 @@ const AddMembership = () => {
                 <TextInput
                     label="Số lượng sách có thể thuê trong 1 tháng ( max )"
                     name="maxBook"
-                    type="text"
+                    type="number"
                     placeholder="Nhập số lượng sách"
                     value={formData.maxBook}
                     onChange={handleChange}
