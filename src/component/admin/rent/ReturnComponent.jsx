@@ -1,45 +1,59 @@
-import React, { useEffect, useState } from 'react'
-import { getLoansWithReturningStatus, getLoansWithReturnStatus, returnLoan } from '../../../service/RentService';
+import React, { useEffect, useState } from 'react';
+import { getLoansWithReturningStatus, returnLoan } from '../../../service/RentService';
 import useNotification from '../../../hooks/useNotification';
-import { Button, Table } from 'react-bootstrap';
+import { Button, Table, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import Notification from '../../common/Notification';
+import './RentComponent.css'; // Import the CSS file here
 
 const ReturnComponent = () => {
     const [rentReturn, setRentReturn] = useState([]);
-    const {showError, showSuccess} = useNotification();
+    const { showError, showSuccess } = useNotification();
     const [tmp, setTmp] = useState(false);
 
     useEffect(() => {
         fetchLoanReturn();
-    },[tmp])
+    }, [tmp]);
+
+    const formatDateTime = (dateString) => {
+        const options = {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        };
+        const date = new Date(dateString);
+        const formattedDate = date.toLocaleDateString('sv-SE');
+        const formattedTime = date.toLocaleTimeString('sv-SE', { hour12: false });
+        return `${formattedDate} ${formattedTime}`;
+    };
 
     const fetchLoanReturn = async () => {
         await getLoansWithReturningStatus()
             .then(res => {
-                console.log(res);
                 if (res?.code === 200) {
-                    setRentReturn(res?.data)
+                    setRentReturn(res?.data);
                 }
             })
             .catch(err => {
-                console.error("Lỗi khi lấy tác giả:", err);
-                showError('Lỗi khi lấy danh sách cho thuê');
+                console.error("Lỗi khi lấy danh sách trả sách:", err);
+                showError('Lỗi khi lấy danh sách trả sách');
             });
-
     };
 
     const handleApprove = async (loanId, bookCopyId) => {
-        // call api to change the status into AVAILABLE
-        const body = { loanId: loanId, bookCopyId: bookCopyId, note: '' }
+        const body = { loanId: loanId, bookCopyId: bookCopyId, note: '' };
         await returnLoan(body).then(res => {
             if (res?.code === 200) {
                 setTmp(!tmp);
             }
         }).catch(err => {
-            showError("Lỗi khi đồng ý cho mượn sách")
+            showError("Lỗi khi đồng ý trả sách");
             console.log(err);
-        })
-    }
+        });
+    };
 
     return (
         <div>
@@ -65,11 +79,18 @@ const ReturnComponent = () => {
                         {rentReturn?.map((r, idx) => (
                             <tr key={idx}>
                                 <td className="align-middle">{r?.userName}</td>
-                                <td className="align-middle">{r?.bookCopyResponse?.title}</td>
+                                <OverlayTrigger
+                                    placement="top"
+                                    overlay={<Tooltip id={`tooltip-${idx}`} className="custom-tooltip">{r?.bookCopyResponse?.title}</Tooltip>}
+                                >
+                                    <td className="align-middle" style={{ maxWidth: '200px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                                        {r?.bookCopyResponse?.title}
+                                    </td>
+                                </OverlayTrigger>
                                 <td className="align-middle">{r?.bookCopyResponse?.barcode}</td>
-                                <td className="align-middle">{r?.borrowAt}</td>
-                                <td className="align-middle">{r?.returnAt}</td>
-                                <td className="align-middle">{r?.dueDate}</td>
+                                <td className="align-middle">{formatDateTime(r?.borrowAt)}</td>
+                                <td className="align-middle">{formatDateTime(r?.returnAt)}</td>
+                                <td className="align-middle">{formatDateTime(r?.dueDate)}</td>
                                 <td className="align-middle">{r?.status}</td>
                                 <td className="align-middle">
                                     <Button
@@ -86,30 +107,16 @@ const ReturnComponent = () => {
                                         <i className="bi bi-check-lg"></i>
                                         <span className='m-1'>Chấp nhận</span>
                                     </Button>
-                            
                                 </td>
                             </tr>
                         ))}
                     </tbody>
-                </Table>) : (
+                </Table>
+            ) : (
                 <p>Không có yêu cầu trả sách nào được tìm thấy</p>
             )}
-
-
-            {/* <CustomModal
-                show={showRejectModal}
-                handleClose={handleCloseRejectModal}
-                title="Xác nhận từ chối mượn sách"
-                handleSave={() => handleRejectRent(rentToReject?.loanId, rentToReject?.bookCopyResponse?.id)}
-                submitting={submittingReject}
-                hasFooter={true}
-            >
-                <p>Bạn có chắc chắn muốn từ chối danh mục <strong>{rentToReject?.bookCopyResponse?.barcode}</strong> không?</p>
-                <textarea value={reason} onChange={(e) => setReason(e.target.value)} cols={55} rows={10}/>
-            </CustomModal> */}
-
         </div>
-    )
-}
+    );
+};
 
-export default ReturnComponent
+export default ReturnComponent;
