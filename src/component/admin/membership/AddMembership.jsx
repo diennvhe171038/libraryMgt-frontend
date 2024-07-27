@@ -30,10 +30,17 @@ const AddMembership = () => {
     const [formData, setFormData] = useState({
         email: user?.email,
         nameSubscription: '',
-        fee_member: 0,
-        expireDate: 0,
-        maxBook: 0,
+        fee_member: '',
+        expireDate: '',
+        maxBook: '',
         selectedBenefits: []
+    });
+
+    const [errors, setErrors] = useState({
+        nameSubscription: '',
+        fee_member: '',
+        expireDate: '',
+        maxBook: ''
     });
 
     const handleChange = (e) => {
@@ -43,6 +50,7 @@ const AddMembership = () => {
             ...prevData,
             [name]: newValue
         }));
+        validateForm(name, newValue);
     };
 
     const handleBenefitChange = (e) => {
@@ -61,30 +69,119 @@ const AddMembership = () => {
     };
 
 
-    const validateForm = () => {
-        const { nameSubscription, fee_member, maxBook } = formData;
-        const nameSubscriptionPattern = /^[a-zA-Z0-9\s]+$/;
-        if (!nameSubscription || !nameSubscriptionPattern.test(nameSubscription)) {
-            showError('Tên gói sai định dạng');
-            return false;
+    // const validateForm = () => {
+    //     const { nameSubscription, fee_member, maxBook } = formData;
+    //     const nameSubscriptionPattern = /^[a-zA-Z0-9\s]+$/;
+    //     if (!nameSubscription || !nameSubscriptionPattern.test(nameSubscription)) {
+    //         showError('Tên gói sai định dạng');
+    //         return false;
+    //     }
+    //     if (nameSubscription != undefined && nameSubscription.trim() === '') {
+    //         showError('Vui kiểm tra tên gói');
+    //         return false;
+    //     }
+    //     if (parseFloat(fee_member) < 0 || parseFloat(maxBook) < 0) {
+    //         showError('Giá gói không thể nhỏ hơn hoặc bằng 0');
+    //         return false;
+    //     }
+    //     return true;
+    // }
+
+    const validateForm = (name, value) => {
+        let newErrors = { ...errors };
+        let valid = true;
+
+        const validateNameSubscription = (nameSubscription) => {
+            if (!nameSubscription) {
+                return 'Vui lòng nhập tên gói';
+            } 
+            return '';
         }
-        if (nameSubscription != undefined && nameSubscription.trim() === '') {
-            showError('Vui kiểm tra tên gói');
-            return false;
+
+        const validateFeeMember = (fee_member) => {
+            const feePattern = /^[0-9]+$/;
+            if(!fee_member) {
+                return 'Vui lòng nhập giá gói';
+            } else if (!feePattern.test(fee_member)) {
+                return 'Giá gói không hợp lệ';
+            } else if (parseInt(fee_member) < 0) {
+                return 'Giá gói không thể nhỏ hơn 0';
+            }
+            return '';
         }
-        if (parseFloat(fee_member) < 0 || parseFloat(maxBook) < 0) {
-            showError('Giá gói không thể nhỏ hơn hoặc bằng 0');
-            return false;
+
+        const validateExpireDate = (expireDate) => {
+            const expireDatePattern = /^[0-9]+$/;
+            if (!expireDate) {
+                return 'Vui lòng nhập thời hạn gói';
+            } else if (!expireDatePattern.test(expireDate)) {
+                return 'Thời hạn gói không hợp lệ';
+            } else if (parseInt(expireDate) <= 0) {
+                return 'Thời hạn gói không thể nhỏ hơn hoặc bằng 0';
+            }
+            return '';
         }
-        return true;
+
+        const validateMaxBook = (maxBook) => {
+            const maxBookPattern = /^[0-9]+$/;
+            if (!maxBook) {
+                return 'Vui lòng nhập số lượng sách tối đa';
+            } else if (!maxBookPattern.test(maxBook)) {
+                return 'Số lượng sách tối đa không hợp lệ';
+            } else if (parseInt(maxBook) <= 0) {
+                return 'Số lượng sách tối đa không thể nhỏ hơn hoặc bằng 0';
+            }
+            
+
+            return '';
+        }
+
+        switch (name) {
+            case 'nameSubscription':
+                newErrors.nameSubscription = validateNameSubscription(value);
+                if (newErrors.nameSubscription) {
+                    valid = false;
+                }
+                break;
+            case 'fee_member':
+                newErrors.fee_member = validateFeeMember(value);
+                if (newErrors.fee_member) {
+                    valid = false;
+                }
+                break;
+            case 'expireDate':
+                newErrors.expireDate = validateExpireDate(value);
+                if (newErrors.expireDate) {
+                    valid = false;
+                }
+                break;
+            case 'maxBook':
+                newErrors.maxBook = validateMaxBook(value);
+                if (newErrors.maxBook) {
+                    valid = false;
+                }
+                break;
+            default:
+                break;
+        }
+
+        setErrors(newErrors);
+        return valid;
+    }
+
+    const handleBlur = (e) => {
+        const { name, value } = e.target;
+        validateForm(name, value);
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!validateForm()) {
-            // showError('Vui kiểm tra tên gói hoặc giá không thể nhỏ hơn 0');
+        
+        if (!validateForm('nameSubscription', formData.nameSubscription) || !validateForm('fee_member', formData.fee_member) || !validateForm('expireDate', formData.expireDate) || !validateForm('maxBook', formData.maxBook)) {
             return;
         }
+
+
         console.log(formData);
         setSubmitting(true);
         await new Promise(r => setTimeout(r, 2000));
@@ -140,32 +237,40 @@ const AddMembership = () => {
                     placeholder="Nhập tên gói"
                     value={formData.nameSubscription}
                     onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={errors.nameSubscription}
                 />
                 <TextInput
                     label="Thời hạn của gói ( tháng )"
                     name="expireDate"
-                    type="number"
+                    type="text"
                     placeholder="Nhập thời hạn của gói"
                     value={formData.expireDate}
                     onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={errors.expireDate}
                 />
 
                 <TextInput
                     label="Giá"
                     name="fee_member"
-                    type="number"
+                    type="text"
                     placeholder="Nhập giá"
                     value={formData.fee_member}
                     onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={errors.fee_member}
                 />
 
                 <TextInput
                     label="Số lượng sách có thể thuê trong 1 tháng ( max )"
                     name="maxBook"
-                    type="number"
-                    placeholder="Nhập giá"
+                    type="text"
+                    placeholder="Nhập số lượng sách"
                     value={formData.maxBook}
                     onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={errors.maxBook}
                 />
 
 

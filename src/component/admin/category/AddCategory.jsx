@@ -62,6 +62,13 @@ const AddCategory = () => {
     return true;
   }
 
+  const handleBlur = (e) => {
+    if (!validateForm()) {
+      showError('Vui lòng nhập tên danh mục');
+    }
+
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
@@ -110,6 +117,7 @@ const AddCategory = () => {
           placeholder="Nhập tên danh mục"
           value={formData.name}
           onChange={handleChange}
+          onBlur={handleBlur}
         />
 
         <Form.Group className="mb-3">
@@ -119,6 +127,7 @@ const AddCategory = () => {
             name="parentId"
             value={formData.parentId}
             onChange={handleChange}
+            onBlur={handleBlur}
             placeholder="Chọn danh mục cha"
             data={parentCategories}
             valueType="id"

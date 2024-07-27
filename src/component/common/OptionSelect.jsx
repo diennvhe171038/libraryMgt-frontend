@@ -3,11 +3,18 @@ import { Select } from 'antd';
 
 const { Option, OptGroup } = Select;
 
-const OptionSelect = ({ name, value, onChange, data, placeholder, mode }) => {
+const OptionSelect = ({ name, value, onChange, onBlur, data, placeholder, mode }) => {
   const handleChange = (selectedValues) => {
     console.log("name: ", name, "value: ", selectedValues);
     onChange({ target: { name, value: selectedValues } });
   };
+
+  const handleBlur = () => {
+    if (onBlur) {
+      onBlur({ target: { name, value } });
+    }
+  };
+
 
   const optGroups = [];
   const options = [];
@@ -39,6 +46,7 @@ const OptionSelect = ({ name, value, onChange, data, placeholder, mode }) => {
       value={selectedValuesWithNames}
       placeholder={placeholder}
       onChange={handleChange}
+      onBlur={handleBlur}
       tokenSeparators={[',']}
       allowClear
     >

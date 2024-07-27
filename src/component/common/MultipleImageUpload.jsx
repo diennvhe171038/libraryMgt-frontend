@@ -2,46 +2,11 @@ import { file } from 'jszip';
 import React, { useState, useRef, useEffect } from 'react';
 import { Form, Button, ListGroup } from 'react-bootstrap';
 
-const MultipleImageUpload = ({ label, name, onChange, showError, bookSampleImages }) => {
+const MultipleImageUpload = ({ label, name, onChange, onBlur, showError, bookSampleImages, error }) => {
     const [sampleImageFiles, setSampleImageFiles] = useState([]);
     const [sampleImagePreviews, setSampleImagePreviews] = useState([]);
     const imageInputRef = useRef(null);
 
-    // useEffect(() => {
-    //     const loadDefaultValue = async () => {
-    //         if (defaultValue && defaultValue.length > 0) {
-    //             try {
-    //                 const newImagePreviews = [];
-    //                 const newImageFiles = [];
-
-    //                 for (let i = 0; i < defaultValue.length; i++) {
-    //                     const imageUrl = defaultValue[i].url;
-    //                     const response = await fetch(imageUrl);
-    //                     const blob = await response.blob();
-    //                     const file = new File([blob], defaultValue[i].name, { type: "image/jpeg" });
-
-    //                     newImageFiles.push(file);
-
-    //                     const reader = new FileReader();
-    //                     reader.onloadend = () => {
-    //                         newImagePreviews.push({ file, preview: reader.result });
-    //                         if (newImagePreviews.length === defaultValue.length) {
-    //                             setImagePreviews((prevPreviews) => [...prevPreviews, ...newImagePreviews]);
-    //                         }
-    //                     };
-    //                     reader.readAsDataURL(file);
-    //                 }
-
-    //                 setImageFiles(newImageFiles);
-    //             } catch (error) {
-    //                 console.error('Error loading defaultValue:', error);
-    //                 showError('Error loading defaultValue');
-    //             }
-    //         }
-    //     };
-
-    //     loadDefaultValue();
-    // }, [defaultValue, showError]);
 
     useEffect(() => {
         if (bookSampleImages && bookSampleImages.length > 0) {
@@ -54,7 +19,9 @@ const MultipleImageUpload = ({ label, name, onChange, showError, bookSampleImage
         }
     }, [bookSampleImages]);
 
-    
+    const handleBlur = (e) => {
+        onBlur(e);
+    };
 
     const handleImageChange = (e) => {
         const files = Array.from(e.target.files);
@@ -88,25 +55,25 @@ const MultipleImageUpload = ({ label, name, onChange, showError, bookSampleImage
         setSampleImagePreviews(newImagePreviews);
 
         onChange({ target: { name, files: newImageFiles } });
-
-        
     };
 
     console.log('sampleImageFiles:', sampleImageFiles);
     console.log('sampleImagePreviews:', sampleImagePreviews);
 
     return (
-        <Form.Group className="mb-3">
+        <Form.Group className="mb-2">
             {label && <Form.Label className="label">{label}</Form.Label>}
             <Form.Control
                 className="field-input"
                 type="file"
                 multiple
-                style={{ fontSize: "small" }}
+                style={{ fontSize: "small", margin: '0' }}
                 name={name}
                 ref={imageInputRef}
                 onChange={handleImageChange}
+                onBlur={handleBlur}
             />
+            {error && <div className="text-danger">{error}</div>}
             {sampleImagePreviews.length > 0 && (
                 <div style={{ marginTop: '10px' }}>
                     <ListGroup>

@@ -4,14 +4,20 @@ import '../../assets/style/Style.css';
 
 const { Option } = Select;
 
-const MultipleSelect = ({ name, value, onChange, options, placeholder, mode }) => {
+const MultipleSelect = ({ name, value, onChange, onBlur, options, placeholder, mode }) => {
   const handleChange = (selectedValue) => {
     console.log('name:', name, 'value:', selectedValue);
     onChange({ target: { name, value: selectedValue } });
   };
 
-   // Tìm và hiển thị tên của các mục đã chọn
-   const selectedValuesWithNames = value.map(val => {
+  const handleBlur = () => {
+    if (onBlur) {
+      onBlur({ target: { name, value } });
+    }
+  };
+
+  // Tìm và hiển thị tên của các mục đã chọn
+  const selectedValuesWithNames = value.map(val => {
     const selectedItem = options.find(item => item.id === val.id);
     return selectedItem ? selectedItem.id : val;
   });
@@ -24,11 +30,13 @@ const MultipleSelect = ({ name, value, onChange, options, placeholder, mode }) =
       style={{
         width: '100%',
         marginBottom: '4px',
-        fontSize: 'small'
+        fontSize: 'small',
+        margin: '0'
       }}
       value={selectedValuesWithNames}
       placeholder={placeholder}
       onChange={handleChange}
+      onBlur={handleBlur}
       tokenSeparators={[',']}
     >
       {options.map((option) => (

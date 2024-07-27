@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import "../../assets/style/HandleHoverImage.css";
 
-const ImageUpload = ({ label, name, onChange, showError, defaultValue }) => {
+const ImageUpload = ({ label, name, onChange, onBlur, showError, defaultValue, error }) => {
     const [bookImagePreview, setBookImagePreview] = useState(null);
     const [hoverImage, setHoverImage] = useState(false);
 
@@ -15,6 +15,10 @@ const ImageUpload = ({ label, name, onChange, showError, defaultValue }) => {
     }, [defaultValue]);
 
     console.log('defaultValue:', defaultValue);
+
+    const handleBlur = (e) => {
+        onBlur(e);
+    }
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -59,16 +63,18 @@ const ImageUpload = ({ label, name, onChange, showError, defaultValue }) => {
     };
 
     return (
-        <Form.Group className="mb-3">
+        <Form.Group className="mb-2">
             {label && <Form.Label className="label">{label}</Form.Label>}
             <Form.Control
                 className="field-input"
                 type="file"
-                style={{ fontSize: "small" }}
+                style={{ fontSize: "small", margin: '0' }}
                 name={name}
                 ref={bookImageInputRef}
                 onChange={handleImageChange}
+                onBlur={handleBlur}
             />
+            {error && <div className="text-danger">{error}</div>}
             <div
                 className="image-container"
                 onMouseEnter={() => setHoverImage(true)}

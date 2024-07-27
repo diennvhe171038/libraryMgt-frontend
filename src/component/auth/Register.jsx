@@ -266,7 +266,7 @@ const Register = () => {
               label={
                 <>
                   Tôi đã đọc và đồng ý với{" "}
-                  <Link to="/terms-and-conditions" style={{color: '#F87555', fontSize: 'samll'}}>Điều khoản dịch vụ</Link> và{" "}
+                  <Link to="/terms-of-service" style={{color: '#F87555', fontSize: 'samll'}}>Điều khoản dịch vụ</Link> và{" "}
                   <Link to="/privacy-policy" style={{color: '#F87555', fontSize: 'small'}}>Chính sách bảo mật</Link> của My Book Shelf
                 </>
               }

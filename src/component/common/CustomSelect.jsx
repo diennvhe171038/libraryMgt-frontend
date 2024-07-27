@@ -3,10 +3,16 @@ import { Select } from 'antd';
 
 const { Option } = Select;
 
-const CustomSelect = ({ name, value, onChange, placeholder, data, valueType }) => {
+const CustomSelect = ({ name, value, onChange, onBlur, placeholder, data, valueType }) => {
     const handleChange = (selectedValue) => {
         console.log('name:', name, 'value:', selectedValue);
         onChange({ target: { name, value: selectedValue } });
+    };
+
+    const handleBlur = () => {
+        if (onBlur) {
+            onBlur({ target: { name, value } });
+        }
     };
 
     const handleSearch = (searchValue) => {
@@ -19,11 +25,13 @@ const CustomSelect = ({ name, value, onChange, placeholder, data, valueType }) =
             style={{
                 width: '100%',
                 marginBottom: '4px',
-                fontSize: 'small'
+                fontSize: 'small',
+                margin: '0'
             }}
             placeholder={placeholder}
             value={value ? value : placeholder}
             onChange={handleChange}
+            onBlur={handleBlur}
             onSearch={handleSearch}
             filterOption={(input, option) =>
                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
