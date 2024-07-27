@@ -38,6 +38,12 @@ const AddAuthor = () => {
     return true;
   }
 
+  const handleBlur = (e) => {
+    if (!validateForm()) {
+      showError('Vui lòng điền tên tác giả');
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
@@ -87,6 +93,7 @@ const AddAuthor = () => {
           placeholder="Nhập tên tác giả"
           value={formData.name}
           onChange={handleChange}
+          onBlur={handleBlur}
         />
 
         <TextArea

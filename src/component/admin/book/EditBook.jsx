@@ -108,6 +108,19 @@ const EditBook = () => {
     categories: []
   });
 
+  const [errors, setErrors] = useState({
+    isbn: '',
+    title: '',
+    price: '',
+    totalPage: '',
+    publicationYear: '',
+    language: '',
+    authors: '',
+    categories: '',
+    bookImage: '',
+    bookSampleImages: ''
+  });
+
   const [bookImage, setBookImage] = useState(null);
 
   const [bookSampleImages, setBookSampleImages] = useState([]);
@@ -212,33 +225,178 @@ const EditBook = () => {
     } else {
       setBookData({ ...bookData, [name]: value });
     }
+    validateForm(name, value);
   };
 
   console.log('Submitting book data:', bookData);
   console.log('Book image:', bookImage);
   console.log('Book sample images:', bookSampleImages);
 
-  const validateForm = () => {
-    const { isbn, title, price, totalPage, publicationYear, language, authors } = bookData;
-    if (!isbn || !title || !price || !totalPage || !publicationYear || !language || authors.length === 0) {
-      showError('Vui lòng nhập đầy đủ thông tin');
-      return false;
-    } else if (!bookImage) {
-      showError('Vui lòng chọn ảnh sách');
-      return false;
-    } else if (bookSampleImages.length === 0) {
-      showError('Vui lòng chọn ít nhất một mẫu ảnh xem trước');
-      return false;
+  const validateForm = (name, value) => {
+    let newErrors = { ...errors };
+    let valid = true;
+
+    const validateISBN = (isbn) => {
+      const isbnPattern = /^[0-9]{10,13}$/;
+      if (!isbn) {
+        return 'Vui lòng nhập ISBN';
+      } else if (!isbnPattern.test(isbn)) {
+        return 'ISBN không hợp lệ';
+      }
+      return '';
     }
 
-    return true;
+    const validateTitle = (title) => {
+      if (!title) {
+        return 'Vui lòng nhập tiêu đề sách';
+      }
+      return '';
+    }
+
+    const validatePrice = (price) => {
+      const pricePattern = /^[0-9]+$/;
+      if (!price) {
+        return 'Vui lòng nhập giá sách';
+      } else if (!pricePattern.test(price)) {
+        return 'Giá sách không hợp lệ';
+      }
+      return '';
+    }
+
+    const validateTotalPage = (totalPage) => {
+      const totalPagePattern = /^[0-9]+$/;
+      if (!totalPage) {
+        return 'Vui lòng nhập số trang';
+      } else if (!totalPagePattern.test(totalPage)) {
+        return 'Số trang không hợp lệ';
+      }
+      return '';
+    }
+
+    const validatePublisher = (publisher) => {
+      if (!publisher) {
+        return 'Vui lòng nhập nhà xuất bản';
+      }
+      return '';
+    }
+
+    const validatePublicationYear = (publicationYear) => {
+      const publicationYearPattern = /^[0-9]{4}$/;
+      if (!publicationYear) {
+        return 'Vui lòng nhập năm xuất bản';
+      } else if (!publicationYearPattern.test(publicationYear)) {
+        return 'Năm xuất bản không hợp lệ';
+      }
+      return '';
+    }
+
+    const validateLanguage = (language) => {
+      if (!language) {
+        return 'Vui lòng chọn ngôn ngữ';
+      }
+      return '';
+    }
+
+    const validateAuthors = (authors) => {
+      if (authors.length === 0) {
+        return 'Vui lòng chọn tác giả';
+      }
+      return '';
+    }
+
+    const validateCategories = (categories) => {
+      if (categories.length === 0) {
+        return 'Vui lòng chọn danh mục';
+      }
+      return '';
+    }
+
+    const validateBookImage = (bookImage) => {
+      if (!bookImage) {
+        return 'Vui lòng chọn ảnh sách';
+      }
+      return '';
+    }
+
+    const validateBookSampleImages = (bookSampleImages) => {
+      if (bookSampleImages.length === 0) {
+        return 'Vui lòng chọn ảnh đọc thử';
+      }
+      return '';
+    }
+
+    switch (name) {
+      case 'isbn':
+        newErrors.isbn = validateISBN(value);
+        if (newErrors.isbn) valid = false;
+        break;
+      case 'title':
+        newErrors.title = validateTitle(value);
+        if (newErrors.title) valid = false;
+        break;
+      case 'price':
+        newErrors.price = validatePrice(value);
+        if (newErrors.price) valid = false;
+        break;
+      case 'totalPage':
+        newErrors.totalPage = validateTotalPage(value);
+        if (newErrors.totalPage) valid = false;
+        break;
+      case 'publisher':
+        newErrors.publisher = validatePublisher(value);
+        if (newErrors.publisher) valid = false;
+        break;
+      case 'publicationYear':
+        newErrors.publicationYear = validatePublicationYear(value);
+        if (newErrors.publicationYear) valid = false;
+        break;
+      case 'language':
+        newErrors.language = validateLanguage(value);
+        if (newErrors.language) valid = false;
+        break;
+      case 'authors':
+        newErrors.authors = validateAuthors(value);
+        if (newErrors.authors) valid = false;
+        break;
+      case 'categories':
+        newErrors.categories = validateCategories(value);
+        if (newErrors.categories) valid = false;
+        break;
+      case 'bookImage':
+        newErrors.bookImage = validateBookImage(value);
+        if (newErrors.bookImage) valid = false;
+        break;
+      case 'bookSampleImages':
+        newErrors.bookSampleImages = validateBookSampleImages(value);
+        if (newErrors.bookSampleImages) valid = false;
+        break;
+      default:
+        break;
+    }
+
+    setErrors(newErrors);
+    return valid;
   };
 
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    validateForm(name, value);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) {
+    if (!validateForm('isbn', bookData.isbn) ||
+      !validateForm('title', bookData.title) ||
+      !validateForm('price', bookData.price) ||
+      !validateForm('totalPage', bookData.totalPage) ||
+      !validateForm('publisher', bookData.publisher) ||
+      !validateForm('publicationYear', bookData.publicationYear) ||
+      !validateForm('language', bookData.language) ||
+      !validateForm('authors', bookData.authors) ||
+      !validateForm('categories', bookData.categories) ||
+      !validateForm('bookImage', bookImage) ||
+      !validateForm('bookSampleImages', bookSampleImages)) {
       return;
     }
 
@@ -304,8 +462,10 @@ const EditBook = () => {
               name="isbn"
               value={bookData.isbn}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder="Nhập ISBN"
               type="text"
+              error={errors.isbn}
             />
 
             <TextInput
@@ -313,8 +473,10 @@ const EditBook = () => {
               name="title"
               value={bookData.title}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder="Nhập tiêu đề sách"
               type="text"
+              error={errors.title}
             />
 
             <Row>
@@ -324,8 +486,10 @@ const EditBook = () => {
                   name="price"
                   value={bookData.price}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   placeholder="Nhập giá sách"
                   type="text"
+                  error={errors.price}
                 />
               </Col>
               <Col>
@@ -334,12 +498,14 @@ const EditBook = () => {
                   name="totalPage"
                   value={bookData.totalPage}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   placeholder="Nhập số trang"
                   type="text"
+                  error={errors.totalPage}
                 />
               </Col>
               <Col>
-                <Form.Group className="mb-3">
+                <Form.Group className="mb-2">
                   <Form.Label className="label">Trạng thái</Form.Label>
                   <CustomSelect
                     name="status"
@@ -358,8 +524,10 @@ const EditBook = () => {
               name="publisher"
               value={bookData.publisher}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder="Nhập nhà xuất bản"
               type="text"
+              error={errors.publisher}
             />
 
             <Row>
@@ -369,20 +537,24 @@ const EditBook = () => {
                   name="publicationYear"
                   value={bookData.publicationYear}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   placeholder="Nhập năm xuất bản"
                   type="text"
+                  error={errors.publicationYear}
                 />
               </Col>
               <Col>
-                <Form.Group className="mb-3">
+                <Form.Group className="mb-2">
                   <Form.Label className="label">Ngôn ngữ</Form.Label>
                   <CustomSelect
                     name="language"
                     value={bookData.language}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     data={languages}
                     placeholder="Chọn ngôn ngữ"
                   />
+                  {errors.language && <div className="text-danger">{errors.language}</div>}
                 </Form.Group>
               </Col>
             </Row>
@@ -398,46 +570,54 @@ const EditBook = () => {
           </Col>
 
           <Col md={5}>
-            <Form.Group className="mb-3">
+            <Form.Group className="mb-2">
               <Form.Label className="label">Tác giả</Form.Label>
               <MultipleSelect
                 name="authors"
                 value={bookData.authors}
                 onChange={handleChange}
+                onBlur={handleBlur}
                 options={authors}
                 placeholder="Chọn tác giả"
                 mode="tags"
               />
+              {errors.authors && <div className="text-danger">{errors.authors}</div>}
             </Form.Group>
 
-            <Form.Group className="mb-3">
+            <Form.Group className="mb-2">
               <Form.Label className="label">Danh mục</Form.Label>
               <OptionSelect
                 name="categories"
                 value={bookData.categories}
                 onChange={handleChange}
+                onBlur={handleBlur}
                 data={categories}
                 placeholder="Chọn danh mục"
                 mode="tags"
               />
+              {errors.categories && <div className="text-danger">{errors.categories}</div>}
             </Form.Group>
 
             <ImageUpload
               label="Tải ảnh sách"
               name="bookImage"
+              value={bookImage}
               onChange={handleChange}
+              onBlur={handleBlur}
               showError={showError}
               defaultValue={bookImage}
+              error={errors.bookImage}
             />
 
             <MultipleImageUpload
               label="Tải ảnh đọc thử"
               name="bookSampleImages"
               onChange={handleChange}
+              onBlur={handleBlur}
               showError={showError}
               bookSampleImages={bookSampleImages}
+              error={errors.bookSampleImages}
             />
-
           </Col>
         </Row>
         <Button

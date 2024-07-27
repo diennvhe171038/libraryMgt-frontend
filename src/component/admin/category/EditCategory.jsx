@@ -85,6 +85,12 @@ const EditCategory = () => {
     return true;
   }
 
+  const handleBlur = (e) => {
+    if (!validateForm()) {
+      showError('Vui lòng nhập tên danh mục');
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -127,6 +133,7 @@ const EditCategory = () => {
           name="name"
           value={formData.name}
           onChange={handleChange}
+          onBlur={handleBlur}
           placeholder="Nhập tên danh mục"
           type="text"
         />
@@ -138,6 +145,7 @@ const EditCategory = () => {
             name="parentId"
             value={formData.parentId === 0 ? "" : formData.parentId}
             onChange={handleChange}
+            onBlur={handleBlur}
             placeholder="Chọn danh mục cha"
             data={parentCategories}
             valueType="id"
