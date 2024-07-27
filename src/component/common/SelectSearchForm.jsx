@@ -44,10 +44,11 @@ const SelectSearchForm = ({ options, onSelectChange, onSearchChange }) => {
         </Form.Select>
         <Form.Control
           type="text"
-          placeholder="Tìm kiếm"
+          placeholder="Tìm kiếm theo tên sách..."
           value={searchText}
           onChange={handleSearchChange}
           style={{
+            width: "auto",
             border: "none",
             backgroundColor: "transparent",
             fontSize: "small",
