@@ -36,6 +36,20 @@ const Membership = () => {
         })
     }
 
+    const formatDate = (dateString) => {
+        const options = {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        }
+        const date = new Date(dateString)
+        return date.toLocaleString('sv-SE', options).replace(' ', ' ')
+    }
+    
     const handleShowDeleteModal = (author) => {
         setAuthorToDelete(author);
         setShowDeleteModal(true);
@@ -57,7 +71,7 @@ const Membership = () => {
                 handleCloseDeleteModal()
                 fetchData();
             }
-        }).catch(err => showError("lỗi khi xóa member sub"))
+        }).catch(err => showError("lỗi khi xóa gói thành viên"))
     }
 
     const handleEditPackage = (p) => {
@@ -99,7 +113,7 @@ const Membership = () => {
                         {membership.map((m) => (
                             <tr key={m.id}>
                                 <td className="align-middle">{m.nameSubscription}</td>
-                                <td className="align-middle">{m.createdAt}</td>
+                                <td className="align-middle">{formatDate(m.createdAt)}</td>
                                 {/* <td className="align-middle">{m?.userCreated?.email}</td> */}
                                 <td className="align-middle">{m?.expireDate} tháng</td>
                                 <td className="align-middle">{m?.feeMember}</td>
